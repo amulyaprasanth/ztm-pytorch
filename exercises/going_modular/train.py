@@ -2,21 +2,38 @@
 Trains a PyTorch image classification model using device-agnostic code.
 """
 
-import os
+import argparse
 import torch
 import  data_setup, engine, model_builder, utils
 
 from torchvision import transforms
 
 # Setup hyperparameters
-NUM_EPOCHS = 5
-BATCH_SIZE = 32
-HIDDEN_UNITS = 10
-LEARNING_RATE = 0.001
+parser = argparse.ArgumentParser(description="Getting some hyperparmeters.")
+
+parser.add_argument("--num_epochs", type=int, default=10, help="number of epochs for the model to train")
+parser.add_argument("--hidden_units", type=int, default=10, help="number of hidden units in hidden_layers")
+parser.add_argument("--batch_size", type=int, default=32, help="batch size for our dataloaders")
+parser.add_argument("--learning_rate", type=float, default=1e-3, help="learning rate for our optimizer")
+
+parser.add_argument("--train_dir", type=str, default="data/pizza_steak_sushi/train", help="directory file path containing training data in standard image classification format")
+parser.add_argument("--test_dir", type=str, default="data/pizza_steak_sushi/test", help="directory file path containing test data in standard image classification format")
+
+# Get our arguments from the parser
+args = parser.parse_args()
+
+# Setup hyperparameters
+NUM_EPOCHS = args.num_epochs
+BATCH_SIZE = args.batch_size
+HIDDEN_UNITS = args.hidden_units
+LEARNING_RATE = args.learning_rate
+print(f"[INFO] Training a model for {NUM_EPOCHS} epochs with batch size {BATCH_SIZE} using {HIDDEN_UNITS} hidden units and a learning rate of {LEARNING_RATE}")
 
 # Setup directories
-train_dir = "data/pizza_steak_sushi/train"
-test_dir = "data/pizza_steak_sushi/test"
+train_dir = args.train_dir
+test_dir = args.test_dir
+print(f"[INFO] Training data file: {train_dir}")
+print(f"[INFO] Testing data file: {test_dir}")
 
 # Setup target device
 device = "cuda" if torch.cuda.is_available() else "cpu"
