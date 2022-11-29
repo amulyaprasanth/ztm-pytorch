@@ -1,28 +1,31 @@
-
 import os
-import requests
 import zipfile
+
 from pathlib import Path
 
+import requests
+
 # Setup path to data folder
-data_path = "data/"
+data_path = Path("data/")
 image_path = data_path / "pizza_steak_sushi"
 
-# If th image folder doesn't exist, download it or else skip it
+# If the image folder doesn't exist, download it and prepare it... 
 if image_path.is_dir():
-    print(f"{image_path} already exists, skipping download")
-
+    print(f"{image_path} directory exists.")
 else:
-    # Download pizza, steak and sushi
-    with open(image_path / "pizza_steak_sushi.zip", "wb") as f:
+    print(f"Did not find {image_path} directory, creating one...")
+    image_path.mkdir(parents=True, exist_ok=True)
+
+    # Download pizza, steak, sushi data
+    with open(data_path / "pizza_steak_sushi.zip", "wb") as f:
         request = requests.get("https://github.com/mrdbourke/pytorch-deep-learning/raw/main/data/pizza_steak_sushi.zip")
-        print(f"Downloading data....")
+        print("Downloading pizza, steak, sushi data...")
         f.write(request.content)
 
-    # Unzip pizza, steak data
-    with zipfile.ZipFile(data_path / "pizza_steak_sushi.zip")as zip_ref:
-        print(f"Unzipping pizza, steak, sushi...")
+    # Unzip pizza, steak, sushi data
+    with zipfile.ZipFile(data_path / "pizza_steak_sushi.zip", "r") as zip_ref:
+        print("Unzipping pizza, steak, sushi data...")
         zip_ref.extractall(image_path)
 
-# Remove zip file
-os.remove(data_path/ "pizza_steak_sushi.zip")
+    # Remove .zip file
+    os.remove(data_path / "pizza_steak_sushi.zip")
